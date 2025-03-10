@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>酒造計算サイト</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: auto;
+            text-align: center;
+        }
+        input, button, select {
+            margin: 5px;
+            padding: 8px;
+            width: 80%;
+        }
+        .result {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h2>酒造計算サイト</h2>
+
+    <h3>アルコール和水量計算</h3>
+    <input type="number" id="tankQuantity" placeholder="タンク数量">
+    <input type="number" id="currentAL" placeholder="現在のAL％">
+    <input type="number" id="targetAL" placeholder="目標AL％">
+    <button onclick="calculateAlcohol()">計算</button>
+    <p class="result" id="alcoholResult"></p>
+
+    <h3>仕込目標温度計算</h3>
+    <input type="number" id="targetTemp" placeholder="仕込み予定温度">
+    <input type="number" id="currentKojiTemp" placeholder="現在水麹温度">
+    <select id="fValue">
+        <option value="4" selected="selected">酒母 (F=4)</option>
+        <option value="5">添仲 (F=5)</option>
+        <option value="6">留 (F=6)</option>
+    </select>
+    <button onclick="calculateTemperature()">計算</button>
+    <p class="result" id="tempResult"></p>
+
+    <script>
+        function calculateAlcohol() {
+            let tankQuantity = parseFloat(document.getElementById("tankQuantity").value);
+            let currentAL = parseFloat(document.getElementById("currentAL").value);
+            let targetAL = parseFloat(document.getElementById("targetAL").value);
+
+            if (isNaN(tankQuantity) || isNaN(currentAL) || isNaN(targetAL) || targetAL === 0) {
+                document.getElementById("alcoholResult").innerText = "正しい値を入力してください";
+                return;
+            }
+
+            let totalAL = tankQuantity * currentAL;
+            let targetQuantity = totalAL / targetAL;
+            let waterAmount = targetQuantity - tankQuantity;
+
+            document.getElementById("alcoholResult").innerText = `和水量: ${waterAmount.toFixed(2)} L`;
+        }
+
+        function calculateTemperature() {
+            let targetTemp = parseFloat(document.getElementById("targetTemp").value);
+            let currentKojiTemp = parseFloat(document.getElementById("currentKojiTemp").value);
+            let fValue = parseFloat(document.getElementById("fValue").value);
+
+            if (isNaN(targetTemp) || isNaN(currentKojiTemp)) {
+                document.getElementById("tempResult").innerText = "正しい値を入力してください";
+                return;
+            }
+
+            let steamedRiceTemp = (targetTemp - currentKojiTemp) * fValue + currentKojiTemp;
+
+            document.getElementById("tempResult").innerText = `蒸米温度: ${steamedRiceTemp.toFixed(2)} ℃`;
+        }
+    </script>
+
+</body></html>
